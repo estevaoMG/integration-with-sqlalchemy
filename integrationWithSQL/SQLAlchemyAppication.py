@@ -21,7 +21,8 @@ class User(Base):
 
 
 class Address(Base):
-    id = Column(Integer, primary_key=True, autoincrement=True)
+    __tablename__ = "address"
+    id = Column(Integer, primary_key=True)
     email_address = Column(String(30), nullable=False)
     user_id = Column(Integer, ForeignKey("user_account.id"), nullable=False)
 
@@ -35,3 +36,4 @@ class Address(Base):
 
 
 print(User.__tablename__)
+print(Address.__tablename__)
