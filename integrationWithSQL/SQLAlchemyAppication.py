@@ -1,5 +1,13 @@
 import sqlalchemy
-from sqlalchemy import Column, ForeignKey, Integer, String, create_engine, inspect
+from sqlalchemy import (
+    Column,
+    ForeignKey,
+    Integer,
+    String,
+    create_engine,
+    inspect,
+    select,
+)
 from sqlalchemy.orm import Session, declarative_base, relationship
 
 Base = declarative_base()
@@ -79,3 +87,13 @@ with Session(engine) as session:
     session.add_all([juliana, sandy, patrik])
 
     session.commit()
+
+stmt = select(User).where(User.name.in_(["juliana", "sandy"]))
+print("Recuperando usuários a partir de condição de filtragem")
+for user in session.scalars(stmt):
+    print(user)
+
+stmt_address = select(Address).where(Address.user_id.in_([2]))
+print("\nRecuperando os endereços de email de Sandy")
+for address in session.scalars(stmt_address):
+    print(address)
