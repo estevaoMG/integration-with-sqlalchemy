@@ -1,6 +1,6 @@
 import sqlalchemy
 from sqlalchemy import Column, ForeignKey, Integer, String, create_engine, inspect
-from sqlalchemy.orm import declarative_base, relationship
+from sqlalchemy.orm import Session, declarative_base, relationship
 
 Base = declarative_base()
 
@@ -32,7 +32,7 @@ class Address(Base):
     )
 
     def __repr__(self):
-        return f"Address(id={self.id}, email={self.email_address})"
+        return f"Address(id={self.id}, email_address={self.email_address})"
 
 
 print(User.__tablename__)
@@ -44,7 +44,6 @@ engine = create_engine("sqlite://")
 # criando as classes como tabelas no banco de dados
 Base.metadata.create_all(engine)
 
-
 # depreciado - será removido em futuro release
 # print(engine.table_names())
 
@@ -54,3 +53,29 @@ inspetor_engine = inspect(engine)
 print(inspetor_engine.has_table("user_account"))
 print(inspetor_engine.get_table_names())
 print(inspetor_engine.default_schema_name)
+
+with Session(engine) as session:
+    juliana = User(
+        name="juliana",
+        fullname="Juliana Mascarenhas",
+        address=[Address(email_address="julianam@email.com")],
+    )
+
+    sandy = User(
+        name="sandy",
+        fullname="Sandy Cardoso",
+        address=[
+            Address(email_address="sandy@email.br"),
+            Address(email_address="sandyc@email.org"),
+        ],
+    )
+
+    patrik = User(
+        name="patrik",
+        fullname="Patrik Cardoso",
+    )
+
+    # enviando para o BD (persistência de dados)
+    session.add_all([juliana, sandy, patrik])
+
+    session.commit()
