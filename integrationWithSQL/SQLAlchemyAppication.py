@@ -5,6 +5,7 @@ from sqlalchemy import (
     Integer,
     String,
     create_engine,
+    func,
     inspect,
     select,
 )
@@ -97,3 +98,27 @@ stmt_address = select(Address).where(Address.user_id.in_([2]))
 print("\nRecuperando os endereços de email de Sandy")
 for address in session.scalars(stmt_address):
     print(address)
+
+
+stmt_order = select(User).order_by(User.fullname)
+print("\nRecuperando info de maneira ordenada")
+for result in session.scalars(stmt_order):
+    print(result)
+
+stmt_join = select(User.fullname, Address.email_address).join_from(Address, User)
+print("\n")
+for result in session.scalars(stmt_join):
+    print(result)
+
+# print(select(User.fullname, Address.email_address).join_from(Address, User))
+
+connection = engine.connect()
+results = connection.execute(stmt_join).fetchall()
+print("\nExecutando statement a partir da connection")
+for result in results:
+    print(result)
+
+stmt_count = select(func.count("*")).select_from(User)
+print("\nTotal de instâncias em User")
+for result in session.scalars(stmt_count):
+    print(result)
